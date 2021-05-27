@@ -55,18 +55,114 @@
     <button>Trigger a Global Error</button>
   </section>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "fecc1c9eaf464717a4a58e16fd0d3479"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+  
   <script>
     let calculateBtn = document.querySelector('#calculate');
     calculateBtn.addEventListener('click', () => {
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        let output = document.querySelector('output');
+        let firstNum = document.querySelector('#first-num').value;
+        let secondNum = document.querySelector('#second-num').value;
+        if (firstNum === "" || secondNum === "") {
+          throw new NoInputError('One of the inputs is empty');
+        }
+        let operator = document.querySelector('#operator').value;
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      } catch (err) {
+        console.log('Sadly an error happened friend');
+        console.error(err);
+      } finally {
+        console.log('Finished calculation');
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
-    // TODO - Make buttons functional
+    
+    errorBtns[0].addEventListener('click', () => {
+      console.log('Console Log Demo');
+    });
+  
+    errorBtns[1].addEventListener('click', () => {
+      console.error('Console Error Demo');
+    });
+
+    errorBtns[2].addEventListener('click', () => {
+      console.dir(errorBtns[2]);
+    });
+
+    errorBtns[3].addEventListener('click', () => {
+      console.dirxml(document.querySelector('body'));
+    });
+  
+    let groupLabel = 'Log Group';
+    errorBtns[4].addEventListener('click', () => {
+      console.group(groupLabel);
+    });
+    
+    errorBtns[5].addEventListener('click', () => {
+      console.groupEnd(groupLabel);
+    });
+
+    errorBtns[6].addEventListener('click', () => {
+      console.table([
+        {
+          name: 'Software Engineering',
+          num: 110
+        },
+        {
+          name: 'Programming Languages',
+          num: 130
+        },
+        {
+          name: 'Advanced Software Engineering',
+          num: 112
+        }
+      ]);
+    });
+
+    let timerLabel = 'Run Time';
+    errorBtns[7].addEventListener('click', () => {
+      console.log('Timer started!')
+      console.time(timerLabel);
+    });
+
+    errorBtns[8].addEventListener('click', () => {
+      console.log('Timer ended!')
+      console.timeEnd(timerLabel);
+    });
+
+    deepest = () => { console.trace(); };
+    deeper = () => { deepest();  };
+    deep = () => { deeper(); };
+    traceTest = () => { deep(); };
+
+    errorBtns[9].addEventListener('click', onClick = () => {
+      traceTest();
+    });
+
+    errorBtns[10].addEventListener('click', () => {
+      console.log('Sadly an error happened friend');
+      console.log(boom);
+    });
+
+    class NoInputError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'NoInputError';
+      }
+    }
+
+    window.onerror = (err) => {
+      console.log('Window caught error: ' + err);
+    }
+
   </script>
 </body>
 </html>
